@@ -10,9 +10,9 @@
 {%- for domain, params in client.get('domain', {}).items() %}
 {%- if params.get('enabled', true) %}
 {%- set auth = client.auth.copy() %}
-{%- if params.auth is defined %}
-  {% do auth.update(params.auth) %}
-{% endif %}
+{%- if params.get('auth') is not none %}
+  {%- do auth.update(params.auth) %}
+{%- endif %}
 {%- set main_domain = params.name|default(domain) %}
 {%- set cert_path = client.conf_dir + '/live/' + main_domain + '/cert.pem' %}
 {%- set subject_alternative_names = ['DNS:' + main_domain] %}
@@ -27,7 +27,11 @@ certbot_{{ domain }}:
   cmd.run:
     - name: >
         certbot certonly {{ staging }} --non-interactive --agree-tos --no-self-upgrade --email {{ params.email|default(client.email) }}
+        {%- if auth.get('installer') is not none %}
         --installer {{ auth.installer }} --authenticator {{ auth.method }}
+        {%- else %}
+        --{{ auth.method }}
+        {%- endif %}
         {%- if auth.method == 'standalone' %}
         --preferred-challenges {{ auth.type }} --http-01-port {{ auth.port }}
         {%- elif auth.method == 'webroot' %}
