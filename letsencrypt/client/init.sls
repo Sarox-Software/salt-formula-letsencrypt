@@ -11,10 +11,7 @@ certbot_packages_openssl:
         - name: {{ client.pkg_openssl }}
 
 {%- if client.source.engine == 'pkg' %}
-{% set extra_packages = [] %}
-{% if client.auth.method in ("apache", "nginx") %}
-    {% set extra_packages = client.source.get("pkgs_" + client.auth.method, []) %}
-{% endif %}
+{% set extra_packages = client.source.get("pkgs", []) %}
 
 certbot_packages:
   pkg.installed:
