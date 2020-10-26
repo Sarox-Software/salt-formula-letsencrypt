@@ -14,10 +14,10 @@ certbot_packages_openssl:
 
 {%- if client.source.engine == 'pkg' %}
 {% set extra_packages = [] %}
-{% if client.auth.installer not in preinstalled_plugins %}
+{% if client.auth.get('installer') not in preinstalled_plugins %}
     {% set extra_packages = extra_packages + client.source.get("pkgs_" + client.auth.installer, []) %}
 {% endif %}
-{% if client.auth.method not in preinstalled_plugins %}
+{% if client.auth.get('method') not in preinstalled_plugins %}
     {% set extra_packages = extra_packages + client.source.get("pkgs_" + client.auth.method, []) %}
 {% endif %}
 
