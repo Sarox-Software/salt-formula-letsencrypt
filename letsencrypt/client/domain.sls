@@ -9,7 +9,7 @@
 
 {%- for domain, params in client.get('domain', {}).items() %}
 {%- if params.get('enabled', true) %}
-{%- set auth = default(client.auth) %}
+{%- set auth = {}.update(client.auth) %}
 {%- if params.auth is defined %}
   {% do auth.update(params.auth) %}
 {% endif %}
