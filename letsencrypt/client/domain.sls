@@ -9,7 +9,10 @@
 
 {%- for domain, params in client.get('domain', {}).items() %}
 {%- if params.get('enabled', true) %}
-{%- set auth = params.auth|default(client.auth) %}
+{%- set auth = default(client.auth) %}
+{%- if params.auth is defined %}
+  {% do auth.update(params.auth) %}
+{% endif %}
 {%- set main_domain = params.name|default(domain) %}
 {%- set cert_path = client.conf_dir + '/live/' + main_domain + '/cert.pem' %}
 {%- set subject_alternative_names = ['DNS:' + main_domain] %}
