@@ -24,12 +24,11 @@ certbot_{{ domain }}:
   cmd.run:
     - name: >
         certbot certonly {{ staging }} --non-interactive --agree-tos --no-self-upgrade --email {{ params.email|default(client.email) }}
+        --installer {{ auth.installer }} --authenticator {{ auth.method }}
         {%- if auth.method == 'standalone' %}
-        --standalone --preferred-challenges {{ auth.type }} --http-01-port {{ auth.port }}
+        --preferred-challenges {{ auth.type }} --http-01-port {{ auth.port }}
         {%- elif auth.method == 'webroot' %}
-        --webroot --webroot-path {{ auth.path }}
-        {%- elif auth.method in ['apache', 'nginx'] %}
-        --{{ auth.method }}
+        --webroot-path {{ auth.path }}
         {%- endif %}
         {%- if params.get('deploy_hook', None) %}
         --deploy-hook '{{ params.deploy_hook }}'
