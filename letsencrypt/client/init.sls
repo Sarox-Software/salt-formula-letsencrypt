@@ -10,8 +10,16 @@ certbot_packages_openssl:
     pkg.installed:
         - name: {{ client.pkg_openssl }}
 
+{%- set preinstalled_plugins = ("standalone", "webroot") %}
+
 {%- if client.source.engine == 'pkg' %}
-{% set extra_packages = client.source.get("pkgs", []) %}
+{% set extra_packages = [] %}
+{% if client.auth.installer not in preinstalled_plugins %}
+    {% do extra_packages += client.source.get("pkgs_" + client.auth.installer, []) %}
+{% endif %}
+{% if client.auth.method not in preinstalled_plugins %}
+    {% do extra_packages += client.source.get("pkgs_" + client.auth.method, []) %}
+{% endif %}
 
 certbot_packages:
   pkg.installed:
